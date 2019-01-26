@@ -9,6 +9,9 @@
 #include "Model/Solid/LinearElastic/Degradable/Isotropic.H"
 
 #include "Test/Operator/Elastic.H"
+#include "Test/Model/Interface/GrainBoundary/GrainBoundary.H"
+#include "Model/Interface/GrainBoundary/Sin.H"
+#include "Model/Interface/GrainBoundary/AbsSin.H"
 
 #include "Operator/Elastic.H"
 
@@ -23,8 +26,23 @@ int main (int argc, char* argv[])
 	int failed = 0;
 
 	{
+		Test::Model::Interface::GrainBoundary::GrainBoundary<Model::Interface::GrainBoundary::Sin> test;
+		Util::Test::Message(          "Model::Solid::Interface::GrainBoundary<Sin>");
+		failed += Util::Test::Message("  ├ Sym",            test.Sym(1));
+		failed += Util::Test::Message("  ├ DerivativeTest1",test.DerivativeTest1(1));
+		failed += Util::Test::Message("  └ DerivativeTest2",test.DerivativeTest2(1));
+	}
+
+	{
+		Test::Model::Interface::GrainBoundary::GrainBoundary<Model::Interface::GrainBoundary::AbsSin> test;
+		Util::Test::Message(          "Model::Solid::Interface::GrainBoundary<AbsSin>");
+		failed += Util::Test::Message("  ├ Sym",            test.Sym(1));
+		failed += Util::Test::Message("  ├ DerivativeTest1",test.DerivativeTest1(1));
+		failed += Util::Test::Message("  └ DerivativeTest2",test.DerivativeTest2(1));
+	}
+
+	{
 		Model::Solid::LinearElastic::Test<Model::Solid::LinearElastic::Isotropic> test;
-		
 		Util::Test::Message(          "Model::Solid::LinearElastic<Isotropic>");
 		failed += Util::Test::Message("  ├ Consistency",    test.Consistency(0));
 		failed += Util::Test::Message("  ├ MinorSymmetry1", test.MinorSymmetry1(0));
@@ -70,11 +88,6 @@ int main (int argc, char* argv[])
 
 		test.Define(16,2);
 		Util::Test::Message(          "Elastic Operator Trig Test 16x16, 2 levels");
-		failed += Util::Test::Message("  ├ Reflux test",          test.RefluxTest(0));
-		failed += Util::Test::Message("  └ Component 0, period=1",test.TrigTest(0,0,1));
-
-		test.Define(16,3);
-		Util::Test::Message(          "Elastic Operator Trig Test 16x16, 3 levels");
 		failed += Util::Test::Message("  ├ Reflux test",          test.RefluxTest(0));
 		failed += Util::Test::Message("  └ Component 0, period=1",test.TrigTest(0,0,1));
 	}
